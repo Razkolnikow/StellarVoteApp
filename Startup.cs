@@ -17,6 +17,8 @@ using StellarVoteApp.Data.Models.Contracts;
 using Microsoft.Extensions.Options;
 using AspNetCore.Identity.Mongo;
 using AspNetCore.Identity.Mongo.Model;
+using StellarVoteApp.Models.Mailing;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace StellarVoteApp
 {
@@ -58,10 +60,16 @@ namespace StellarVoteApp
 
             services.AddIdentityMongoDbProvider<Data.Models.StellarVoteUser, MongoRole>(identityOptions => {
                 identityOptions.Password.RequiredLength = 6;
+                identityOptions.Password.RequireLowercase = false;
+                identityOptions.Password.RequireUppercase = false;
+                identityOptions.Password.RequireNonAlphanumeric = false;
+                identityOptions.Password.RequireDigit = false;
             }, mongo =>
             {
                 mongo.ConnectionString = ConnectionString;
             });
+
+            services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

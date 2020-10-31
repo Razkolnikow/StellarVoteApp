@@ -9,11 +9,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="StellarVoteApp.Core\**" />
+    <Compile Remove="StellarVoteApp.Data\**" />
+    <Content Remove="StellarVoteApp.Core\**" />
+    <Content Remove="StellarVoteApp.Data\**" />
+    <EmbeddedResource Remove="StellarVoteApp.Core\**" />
+    <EmbeddedResource Remove="StellarVoteApp.Data\**" />
+    <None Remove="StellarVoteApp.Core\**" />
+    <None Remove="StellarVoteApp.Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.Mongo" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
     <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="StellarVoteApp.Core\StellarVoteApp.Core.csproj" />
+    <ProjectReference Include="StellarVoteApp.Data\StellarVoteApp.Data.csproj" />
   </ItemGroup>
 
 </Project>
