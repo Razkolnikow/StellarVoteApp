@@ -19,6 +19,8 @@ using AspNetCore.Identity.Mongo;
 using AspNetCore.Identity.Mongo.Model;
 using StellarVoteApp.Models.Mailing;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using StellarVoteApp.Data.Services.Contracts;
+using StellarVoteApp.Data.Services;
 
 namespace StellarVoteApp
 {
@@ -46,12 +48,6 @@ namespace StellarVoteApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("DefaultConnection")));
-            //services.AddDefaultIdentity<IdentityUser>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.Configure<StellarVoteDatabaseSettings>(
                     Configuration.GetSection(nameof(StellarVoteDatabaseSettings)));
 
@@ -70,6 +66,7 @@ namespace StellarVoteApp
             });
 
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IUserService, UserService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
