@@ -21,6 +21,8 @@ using StellarVoteApp.Models.Mailing;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using StellarVoteApp.Data.Services.Contracts;
 using StellarVoteApp.Data.Services;
+using StellarVoteApp.Core.Services.Contracts;
+using StellarVoteApp.Core.Services;
 
 namespace StellarVoteApp
 {
@@ -54,6 +56,7 @@ namespace StellarVoteApp
             services.AddSingleton<IStellarVoteDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<StellarVoteDatabaseSettings>>().Value);
 
+            // Password options are set this way for testing purposes
             services.AddIdentityMongoDbProvider<Data.Models.StellarVoteUser, MongoRole>(identityOptions => {
                 identityOptions.Password.RequiredLength = 6;
                 identityOptions.Password.RequireLowercase = false;
@@ -67,6 +70,7 @@ namespace StellarVoteApp
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IVoteService, VoteService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
