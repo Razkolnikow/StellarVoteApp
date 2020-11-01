@@ -35,5 +35,10 @@ namespace StellarVoteApp.Data.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> HasUserVotingAccount(string userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

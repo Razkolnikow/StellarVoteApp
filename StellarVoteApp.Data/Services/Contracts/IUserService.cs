@@ -13,5 +13,7 @@ namespace StellarVoteApp.Data.Services.Contracts
         Task<bool> SaveAccountDetails(string userId, string pubKey, string secretKey);
 
         Task<string> GetAccountDetails(string userId);
+
+        Task<bool> HasUserVotingAccount(string userId);
     }
 }
