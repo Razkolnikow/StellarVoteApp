@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson.IO;
 using Newtonsoft.Json.Linq;
 using StellarVoteApp.Core.Services.Contracts;
 using StellarVoteApp.Data.Services.Contracts;
@@ -18,12 +19,14 @@ namespace StellarVoteApp.Controllers
         private IVoteService voteService;
         private IUserService userService;
         private IUserNationalIDInformationService idService;
+        private IJsonConverter jsonConverter;
 
-        public VoteController(IVoteService voteService, IUserService userService, IUserNationalIDInformationService idService)
+        public VoteController(IVoteService voteService, IUserService userService, IUserNationalIDInformationService idService, IJsonConverter jsonConverter)
         {
             this.voteService = voteService;
             this.userService = userService;
             this.idService = idService;
+            this.jsonConverter = jsonConverter;
         }
 
         public IActionResult Index()
@@ -39,6 +42,8 @@ namespace StellarVoteApp.Controllers
         [HttpPost]
         public async Task<StellarAccountViewModel> CreateAccount([FromBody] JObject json)
         {
+            var idCredentials = this.jsonConverter.DeserializeJson<IdCredentialsViewModel>(json.ToString());
+            var idCredentialsExist = await this.userService.CheckIfIdCredentialsExist(idCredentials.IdNumber, idCredentials.CardNumber);
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var hasStellarAccount = await this.userService.HasUserVotingAccount(userId);
             if (hasStellarAccount)
@@ -73,10 +78,21 @@ namespace StellarVoteApp.Controllers
                 var receivedVoteToken = await this.voteService.SendVoteTokenToUser(stellarAccount.AccountId);
             }
 
+            await this.userService.SaveUserIdCredentials(idCredentials.IdNumber, idCredentials.CardNumber);
+
             var balances = await this.voteService.GetBalances(stellarAccount.AccountId);
             model.AccountId = stellarAccount.AccountId;
-            model.XLMBalance = balances[0].BalanceString;
-            model.VoteTokenBalance = balances.Length > 1 ? balances[1].BalanceString : "0";
+            foreach (var b in balances)
+            {
+                if (b.Asset.ToLower().Contains("native"))
+                {
+                    model.XLMBalance = b.BalanceString;
+                }
+                else
+                {
+                    model.VoteTokenBalance = b.BalanceString;
+                }
+            }
 
             return model;
         }

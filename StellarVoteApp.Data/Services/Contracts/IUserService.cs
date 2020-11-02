@@ -18,5 +18,21 @@ namespace StellarVoteApp.Data.Services.Contracts
         Task<bool> HasUserVotingAccount(string userId);
 
         Task<bool> SetVotingAccountTrue(string userId);
+
+        /// <summary>
+        /// Saving the hash of the Id Credentials. No readable private data will be saved.
+        /// </summary>
+        /// <param name="nationalIdNumber"></param>
+        /// <param name="numberOfIdCard"></param>
+        /// <returns></returns>
+        Task<bool> SaveUserIdCredentials(string nationalIdNumber, string numberOfIdCard);
+
+        /// <summary>
+        /// Checking the hashed id credentials.
+        /// </summary>
+        /// <param name="nationalIdNumber"></param>
+        /// <param name="numberOfIdCard"></param>
+        /// <returns></returns>
+        Task<bool> CheckIfIdCredentialsExist(string nationalIdNumber, string numberOfIdCard);
     }
 }

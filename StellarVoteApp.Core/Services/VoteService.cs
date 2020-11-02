@@ -12,6 +12,9 @@ namespace StellarVoteApp.Core.Services
 {
     public class VoteService : IVoteService
     {
+
+        // TODO: add validation for id credentials that were already used for creation of stellar account before sending the data to the national DB!!!
+
         public async Task<bool> ChangeTrustVoteToken(string pubKey, string secretKey)
         {
             //Set network and server

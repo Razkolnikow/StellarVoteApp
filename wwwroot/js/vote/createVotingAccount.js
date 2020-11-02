@@ -4,8 +4,8 @@ var cardnumber = $("#cardnumber");
 
 createBtn.on('click', function (ev) {
     var jsonObj = {
-        idnumber: idnumber.val(),
-        cardnumber: cardnumber.val()
+        IdNumber: idnumber.val(),
+        CardNumber: cardnumber.val()
     }
     $.ajax({
         method: "POST",

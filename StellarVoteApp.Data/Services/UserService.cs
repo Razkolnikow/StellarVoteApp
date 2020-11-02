@@ -1,10 +1,12 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using MongoDB.Driver;
 using StellarVoteApp.Core.Models;
 using StellarVoteApp.Data.Models;
 using StellarVoteApp.Data.Models.Contracts;
 using StellarVoteApp.Data.Services.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,7 @@ namespace StellarVoteApp.Data.Services
     public class UserService : IUserService
     {
         private readonly IMongoCollection<StellarVoteUser> _users;
+        private readonly IMongoCollection<IdCredentials> _idCredentials;
 
         public UserService(IStellarVoteDatabaseSettings settings)
         {
@@ -20,6 +23,7 @@ namespace StellarVoteApp.Data.Services
             var database = client.GetDatabase(settings.DatabaseName);
 
             _users = database.GetCollection<StellarVoteUser>(settings.UsersCollectionName);
+            _idCredentials = database.GetCollection<IdCredentials>(settings.IDCollectionName);
         }
 
         public async Task<StellarVoteUser> GetUserByIdAsync(string id)
@@ -89,6 +93,52 @@ namespace StellarVoteApp.Data.Services
             this._users.UpdateOne(filter1, update1);
 
             return true;
+        }
+
+        public async Task<bool> SaveUserIdCredentials(string nationalIdNumber, string numberOfIdCard)
+        {
+            // TODO: Hash the values!!!
+            var hashedIdNumber = this.HashIdInfo(nationalIdNumber);
+            var hashedNumberOfIdCard = this.HashIdInfo(numberOfIdCard);
+            await this._idCredentials.InsertOneAsync(new IdCredentials(hashedIdNumber, hashedNumberOfIdCard));
+
+            return true;
+        }
+
+        public async Task<bool> CheckIfIdCredentialsExist(string nationalIdNumber, string numberOfIdCard)
+        {
+            try
+            {
+                var hashedIdNumber = this.HashIdInfo(nationalIdNumber);
+                var hashedNumberOfCard = this.HashIdInfo(numberOfIdCard);
+                var idCredentials = await this._idCredentials.FindAsync(i => i.NationalIDNumber == hashedIdNumber);
+                var asyncIdCredentials = idCredentials.FirstOrDefault();
+
+                if (asyncIdCredentials == null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            
+        }
+
+        private string HashIdInfo(string source)
+        {
+            using (var md5Hash = MD5.Create())
+            {
+                var sourceBytes = Encoding.UTF8.GetBytes(source);
+
+                var hashBytes = md5Hash.ComputeHash(sourceBytes);
+
+                var hash = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+                return hash;
+            }
         }
     }
 }

@@ -79,6 +79,7 @@ namespace StellarVoteApp
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IVoteService, VoteService>();
             services.AddTransient<IUserNationalIDInformationService, FakeUserNationalIDInformationService>();
+            services.AddTransient<IJsonConverter, JsonConverter>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
