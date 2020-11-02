@@ -66,6 +66,12 @@ namespace StellarVoteApp.Controllers
             }
 
             // TODO change trust etc
+            var isTrustCreated = await this.voteService.ChangeTrustVoteToken(stellarAccount.AccountId, stellarAccount.SecredSeed);
+
+            if (isTrustCreated)
+            {
+                var receivedVoteToken = await this.voteService.SendVoteTokenToUser(stellarAccount.AccountId);
+            }
 
             var balances = await this.voteService.GetBalances(stellarAccount.AccountId);
             model.AccountId = stellarAccount.AccountId;
