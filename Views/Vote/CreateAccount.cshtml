@@ -2,4 +2,39 @@
 @{
 }
 
-<div>Create</div>
+<h3 class="text-center">Create Voting Account</h3>
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header">
+        </div>
+        <div class="card-body card-block">
+            <form autocomplete="off" asp-controller="Vote" asp-action="CreateAccount" method="" class="">
+                <div class="form-group">
+                    <label class=" form-control-label">National ID Number</label>
+                    <input id="idnumber" type="text" placeholder="Enter National ID Number" class="form-control">
+
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class=" form-control-label">Number of National ID Card</label>
+                    <input id="cardnumber" type="text" placeholder="Enter Number of National ID Card" class="form-control">
+
+                    <span class="text-danger"></span>
+                </div>
+                <div class="card-footer">
+                    <button id="create" type="button" class="btn btn-primary btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Submit
+                    </button>
+                    <button type="reset" class="btn btn-danger btn-sm">
+                        <i class="fa fa-ban"></i> Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/vote/createVotingAccount.js"></script>
+}

@@ -16,6 +16,6 @@ namespace StellarVoteApp.Data.Models
 
         public string AccountId { get; set; }
 
-        public string SecretKey { get; set; }
+        public string SecretSeed { get; set; }
     }
 }

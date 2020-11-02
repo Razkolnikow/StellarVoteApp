@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StellarVoteApp.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,5 +38,13 @@ namespace StellarVoteApp.Core.Services.Contracts
         /// <param name="accountId"></param>
         /// <returns></returns>
         Task<bool> ActivateUserAccount(string accountId);
+
+        /// <summary>
+        /// Generates random KeyPair
+        /// </summary>
+        /// <returns></returns>
+        StellarAccount CreateUserAccount();
+
+        Task<BalanceDTO[]> GetBalances(string accountId);
     }
 }

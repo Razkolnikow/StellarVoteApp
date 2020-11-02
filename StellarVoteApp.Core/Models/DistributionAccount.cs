@@ -17,6 +17,12 @@ namespace StellarVoteApp.Core.Models
             } 
         }
 
-        public static string PrivateKey { get; set; }
+        public static string SecretSeed 
+        { 
+            get 
+            {
+                return "SAQ5E5BPVYJR4LEZBAVIWJLZ7QOOICMLTDKGCYSPKV2Z5FKIY5KACMLC";
+            } 
+        }
     }
 }

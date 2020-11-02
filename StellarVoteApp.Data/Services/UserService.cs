@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using StellarVoteApp.Core.Models;
 using StellarVoteApp.Data.Models;
 using StellarVoteApp.Data.Models.Contracts;
 using StellarVoteApp.Data.Services.Contracts;
@@ -26,14 +27,39 @@ namespace StellarVoteApp.Data.Services
             return await this._users.Find(user => user.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<string> GetAccountDetails(string userId)
+        public async Task<StellarAccount> GetAccountDetails(string userId)
         {
-            throw new NotImplementedException();
+            var asyncUser = await this._users.Find(user => user.Id == userId).FirstOrDefaultAsync();
+
+            if (asyncUser == null)
+            {
+                return new StellarAccount(string.Empty, string.Empty);
+            }
+
+            return new StellarAccount(asyncUser.AccountId, asyncUser.SecretSeed);
         }        
 
         public async Task<bool> SaveAccountDetails(string userId, string pubKey, string secretKey)
         {
-            throw new NotImplementedException();
+            var asyncUser = await this._users.FindAsync(u => u.Id == userId);
+            var user = asyncUser.FirstOrDefault();
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var filter1 = Builders<StellarVoteUser>.Filter.Eq(s => s.Id, userId);
+            var update1 = new UpdateDefinitionBuilder<StellarVoteUser>()
+                .Set<string>(u => u.AccountId, pubKey);
+            this._users.UpdateOne(filter1, update1);
+
+            var filter2 = Builders<StellarVoteUser>.Filter.Eq(s => s.Id, userId);
+            var update2 = new UpdateDefinitionBuilder<StellarVoteUser>()
+                .Set<string>(u => u.SecretSeed, secretKey);
+            this._users.UpdateOne(filter2, update2);
+
+            return true;
         }
 
         public async Task<bool> HasUserVotingAccount(string id)
@@ -45,6 +71,24 @@ namespace StellarVoteApp.Data.Services
 
             var userToUse = await this._users.Find(user => user.Id == id).FirstOrDefaultAsync();
             return userToUse.HasStellarVotingAccount;
+        }
+
+        public async Task<bool> SetVotingAccountTrue(string userId)
+        {
+            var asyncUser = await this._users.FindAsync(u => u.Id == userId);
+            var user = asyncUser.FirstOrDefault();
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var filter1 = Builders<StellarVoteUser>.Filter.Eq(s => s.Id, userId);
+            var update1 = new UpdateDefinitionBuilder<StellarVoteUser>()
+                .Set<bool>(u => u.HasStellarVotingAccount, true);
+            this._users.UpdateOne(filter1, update1);
+
+            return true;
         }
     }
 }

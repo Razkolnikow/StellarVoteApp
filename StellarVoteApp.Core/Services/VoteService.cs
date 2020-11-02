@@ -28,7 +28,7 @@ namespace StellarVoteApp.Core.Services
 
             Account sourceAccount = new Account(source.AccountId, accountResponse.SequenceNumber);
 
-            var sourceSponsor = KeyPair.FromSecretSeed(DistributionAccount.PrivateKey);
+            var sourceSponsor = KeyPair.FromSecretSeed(DistributionAccount.SecretSeed);
 
             var sponsored = KeyPair.FromAccountId(pubKey);
 
@@ -77,7 +77,7 @@ namespace StellarVoteApp.Core.Services
             Server server = new Server("https://horizon-testnet.stellar.org");
 
             //Sender
-            var senderSource = KeyPair.FromSecretSeed(DistributionAccount.PrivateKey);
+            var senderSource = KeyPair.FromSecretSeed(DistributionAccount.SecretSeed);
 
             //Destination keypair from the account id
             KeyPair destinationKeyPair = KeyPair.FromAccountId(destinationAddress);
@@ -114,9 +114,51 @@ namespace StellarVoteApp.Core.Services
         {
             throw new NotImplementedException();
         }
+
+        public StellarAccount CreateUserAccount()
+        {
+            Network.UseTestNetwork();
+            KeyPair keypair = KeyPair.Random();
+            var stellarAccount = new StellarAccount(keypair.AccountId, keypair.SecretSeed);
+            return stellarAccount;
+        }
+
         public async Task<bool> ActivateUserAccount(string accountId)
         {
-            throw new NotImplementedException();
+            //Set network and server
+            Network.UseTestNetwork();
+            Server server = new Server("https://horizon-testnet.stellar.org");
+
+            var sourceKeyPair = KeyPair.FromSecretSeed(DistributionAccount.SecretSeed);
+
+            //Destination keypair from the account id
+            KeyPair destinationKeyPair = KeyPair.FromAccountId(accountId);
+
+            AccountResponse sourceAccountResponse = await server.Accounts.Account(DistributionAccount.PublicKey);
+
+            //Create source account object
+            Account sourceAccount = new Account(DistributionAccount.PublicKey, sourceAccountResponse.SequenceNumber);
+
+            Asset asset = new AssetTypeNative();
+
+            //Create payment operation
+            CreateAccountOperation operation = new CreateAccountOperation.Builder(destinationKeyPair, "1").SetSourceAccount(sourceAccount.KeyPair).Build();
+
+            Transaction transaction = new TransactionBuilder(sourceAccount)
+                .AddOperation(operation)
+                .Build();
+
+            transaction.Sign(sourceKeyPair);
+
+            try
+            {
+                var response = await server.SubmitTransaction(transaction);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
         }
 
         private async Task<SubmitTransactionResponse> SubmitTransaction(string transactionEnvelopeBase64)
@@ -137,6 +179,24 @@ namespace StellarVoteApp.Core.Services
             }
 
             return null;
-        }        
+        }
+
+        public async Task<BalanceDTO[]> GetBalances(string accountId)
+        {
+            Network.UseTestNetwork();
+            Server server = new Server("https://horizon-testnet.stellar.org");
+
+            AccountResponse sourceAccountResponse = await server.Accounts.Account(accountId);
+
+            var balances = sourceAccountResponse.Balances;
+
+            var balancesList = new List<BalanceDTO>();
+            foreach (var balance in balances)
+            {
+                balancesList.Add(new BalanceDTO(balance.AssetType, balance.BalanceString));
+            }
+
+            return balancesList.ToArray();
+        }
     }
 }
