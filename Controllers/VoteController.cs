@@ -14,5 +14,10 @@ namespace StellarVoteApp.Controllers
         {
             return View();
         }
+
+        public IActionResult CreateAccount()
+        {
+            return View();
+        }
     }
 }

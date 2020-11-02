@@ -78,6 +78,7 @@ namespace StellarVoteApp
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IVoteService, VoteService>();
+            services.AddTransient<IUserNationalIDInformationService, FakeUserNationalIDInformationService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

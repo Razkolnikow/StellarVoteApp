@@ -36,9 +36,15 @@ namespace StellarVoteApp.Data.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> HasUserVotingAccount(string userId)
+        public async Task<bool> HasUserVotingAccount(string id)
         {
-            throw new NotImplementedException();
+            if (id == null)
+            {
+                return false;
+            }
+
+            var userToUse = await this._users.Find(user => user.Id == id).FirstOrDefaultAsync();
+            return userToUse.HasStellarVotingAccount;
         }
     }
 }

@@ -2,17 +2,28 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using StellarVoteApp.Data.Services.Contracts;
 using StellarVoteApp.Models;
 
 namespace StellarVoteApp.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private IUserService userService;
+        public HomeController(IUserService userService)
         {
-            return View();
+            this.userService = userService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var hasStellarAccount = await this.userService.HasUserVotingAccount(userId);
+            return View(hasStellarAccount);
         }
 
         public IActionResult About()

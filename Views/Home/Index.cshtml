@@ -1,4 +1,10 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@model bool
+
+@inject SignInManager<StellarVoteApp.Data.Models.StellarVoteUser> SignInManager
+@inject UserManager<StellarVoteApp.Data.Models.StellarVoteUser> UserManager
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -13,10 +19,7 @@
             <img src="~/images/banner4.png" alt="ASP.NET" class="img-responsive" />
             <div class="carousel-caption" role="option">
                 <p>
-                    Learn how to build ASP.NET apps that can run anywhere.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                        Learn More
-                    </a>
+                    You can vote from the comfort of your home
                 </p>
             </div>
         </div>
@@ -24,10 +27,7 @@
             <img src="~/images/banner5.png" alt="Visual Studio" class="img-responsive" />
             <div class="carousel-caption" role="option">
                 <p>
-                    There are powerful new features in Visual Studio for building modern web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                        Learn More
-                    </a>
+                    Voting without borders
                 </p>
             </div>
         </div>
@@ -35,10 +35,7 @@
             <img src="~/images/banner6.png" alt="Microsoft Azure" class="img-responsive" />
             <div class="carousel-caption" role="option">
                 <p>
-                    Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                        Learn More
-                    </a>
+                    Voting should be easy and accessible
                 </p>
             </div>
         </div>
@@ -54,41 +51,29 @@
 </div>
 
 <div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core MVC</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398600">Add a Controller and View</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
-        </ul>
+    <div col-sm-12>
+        <h3 class="text-center">Your right to vote is now tokenized on Stellar! You can vote freely! It is easy, it is private and it is secure!</h3>
     </div>
 </div>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div>
+        @if (Model)
+        {
+        <div class="jumbotron">
+            <h2 class="text-center">Your voting account is created!</h2>
+            <p class="text-center">You are all set!</p>
+            <p class="text-center"><a class="btn btn-primary btn-lg" href="#" role="button">Vote</a></p>
+        </div>
+        }
+        else
+        {
+        <div class="jumbotron">
+            <h2 class="text-center">You have to set up your voting account</h2>
+            <p class="text-center">Create voting account</p>
+            <p class="text-center"><a class="btn btn-primary btn-lg" asp-controller="Vote" asp-action="CreateAccount" role="button">Create</a></p>
+        </div>
+        }
+    </div>
+}
