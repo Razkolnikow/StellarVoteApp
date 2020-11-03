@@ -10,6 +10,9 @@ using Newtonsoft.Json.Linq;
 using StellarVoteApp.Core.Services.Contracts;
 using StellarVoteApp.Data.Services.Contracts;
 using StellarVoteApp.Models.ViewModels;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Binder;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace StellarVoteApp.Controllers
 {
@@ -20,18 +23,34 @@ namespace StellarVoteApp.Controllers
         private IUserService userService;
         private IUserNationalIDInformationService idService;
         private IJsonConverter jsonConverter;
+        private IConfiguration config;
 
-        public VoteController(IVoteService voteService, IUserService userService, IUserNationalIDInformationService idService, IJsonConverter jsonConverter)
+        public VoteController(
+            IVoteService voteService, 
+            IUserService userService, 
+            IUserNationalIDInformationService idService, 
+            IJsonConverter jsonConverter,
+            IConfiguration config)
         {
             this.voteService = voteService;
             this.userService = userService;
             this.idService = idService;
             this.jsonConverter = jsonConverter;
+            this.config = config;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var candidates = this.config.GetSection("Candidates").Get<List<SelectListItem>>();
+            return View(new CandidatesViewModel(candidates));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendVote(string value)
+        {
+            // TODO: Send to vote to the stellar network
+
+            return View("SuccessfulVote", value);
         }
 
         public IActionResult CreateAccount()
