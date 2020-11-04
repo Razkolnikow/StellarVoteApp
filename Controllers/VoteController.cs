@@ -74,12 +74,11 @@ namespace StellarVoteApp.Controllers
                 return null;
             }
 
-            var isValidID = this.idService.CheckUserID("", "");
+            var isValidID = this.idService.CheckUserID(idCredentials.IdNumber, idCredentials.CardNumber);
 
             if (!isValidID)
             {
-                // TODO
-                throw new Exception();
+                throw new Exception("Not valid ID Credentials!");
             }
 
             StellarAccountViewModel model = new StellarAccountViewModel();
