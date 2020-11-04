@@ -4,7 +4,7 @@
 
 <h3 class="text-center">Create Voting Account</h3>
 
-<div class="col-sm-12">
+<div id="form" class="col-sm-12">
     <div class="card">
         <div class="card-header">
         </div>
@@ -34,6 +34,32 @@
         </div>
     </div>
 </div>
+
+<div id="spinner"  class="row">       
+    <div class="col-sm-12">
+        <br />
+        <h4 class="text-center">Your voting account is being created...</h4>
+        <br />
+        <div class="loader"></div>
+    </div>
+</div>
+
+<div id="error" class="row">
+    <div class="col-sm-12">
+        <h3>An error occured!</h3>
+    </div>
+</div>
+
+<div id="created" class="row">
+    <div class="col-sm-12">
+        <h3 class="text-center">Your Voting Account has been created!</h3>
+        <br />
+        <h4 class="text-center" id="account-details">
+
+        </h4>
+    </div>
+</div>
+
 
 @section Scripts {
     <script src="~/js/vote/createVotingAccount.js"></script>
