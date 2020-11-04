@@ -49,6 +49,10 @@ namespace StellarVoteApp.Controllers
         public async Task<IActionResult> SendVote(string value)
         {
             // TODO: Send to vote to the stellar network
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var stellarAccount = await this.userService.GetAccountDetails(userId);
+            // TODO get the transaction hash!!!
+            var isVoteSent = await this.voteService.SendVoteToken(stellarAccount.AccountId, stellarAccount.SecredSeed, value);
 
             return View("SuccessfulVote", value);
         }

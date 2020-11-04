@@ -115,7 +115,43 @@ namespace StellarVoteApp.Core.Services
 
         public async Task<bool> SendVoteToken(string pubKey, string secretKey, string memo)
         {
-            throw new NotImplementedException();
+            //Set network and server
+            Network.UseTestNetwork();
+            Server server = new Server("https://horizon-testnet.stellar.org");
+
+            var source = KeyPair.FromSecretSeed(secretKey);
+
+            AccountResponse sourceAccountResponse = await server.Accounts.Account(source.AccountId);
+
+            //Create source account object
+            Account sourceAccount = new Account(source.AccountId, sourceAccountResponse.SequenceNumber);
+
+            Asset asset = new AssetTypeCreditAlphaNum12("StellarV", IssueAccount.PublicKey);
+
+            //Create payment operation
+            PaymentOperation operation = new PaymentOperation.Builder(KeyPair.FromAccountId(DistributionAccount.PublicKey), asset, "1").SetSourceAccount(sourceAccount.KeyPair).Build();
+
+            Transaction innerTransaction = new TransactionBuilder(sourceAccount)
+                .SetFee(100)
+                .AddOperation(operation)
+                .AddMemo(new MemoText(memo))
+                .Build();
+
+            innerTransaction.Sign(source);
+
+            var feeSource = KeyPair.FromSecretSeed(DistributionAccount.SecretSeed);
+            var finalTx = TransactionBuilder.BuildFeeBumpTransaction(feeSource, innerTransaction, 100);
+            finalTx.Sign(feeSource);
+            //Try to send the transaction
+            try
+            {
+                var response = await this.SubmitTransaction(finalTx.ToEnvelopeXdrBase64());
+                return true;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
         }
 
         public StellarAccount CreateUserAccount()
