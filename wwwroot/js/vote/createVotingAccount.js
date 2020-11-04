@@ -28,7 +28,7 @@ createBtn.on('click', function (ev) {
             created.show();
             var accountId = data.accountId;
             var voteTokenBalance = data.voteTokenBalance;
-            $("#account-details").html(`Your accound id is ${accountId} and you have ${voteTokenBalance} Vote token.`);
+            $("#account-details").html(`Your accound id is <strong>${accountId}</strong> and you have <strong>${voteTokenBalance}</strong> Vote token.`);
         },
         error: function (err) {
             spinner.hide();
