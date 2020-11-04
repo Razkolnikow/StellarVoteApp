@@ -1,5 +1,7 @@
 ﻿using stellar_dotnet_sdk;
+using stellar_dotnet_sdk.requests;
 using stellar_dotnet_sdk.responses;
+using stellar_dotnet_sdk.responses.page;
 using StellarVoteApp.Core.Models;
 using StellarVoteApp.Core.Services.Contracts;
 using System;
@@ -12,8 +14,14 @@ namespace StellarVoteApp.Core.Services
 {
     public class VoteService : IVoteService
     {
+        private HttpClient http;
+        private IJsonConverter jsonConverter;
 
-        // TODO: add validation for id credentials that were already used for creation of stellar account before sending the data to the national DB!!!
+        public VoteService(HttpClient http, IJsonConverter jsonConverter)
+        {
+            this.http = http;
+            this.jsonConverter = jsonConverter;
+        }
 
         public async Task<bool> ChangeTrustVoteToken(string pubKey, string secretKey)
         {
@@ -113,7 +121,7 @@ namespace StellarVoteApp.Core.Services
             }
         }
 
-        public async Task<bool> SendVoteToken(string pubKey, string secretKey, string memo)
+        public async Task<string> SendVoteToken(string pubKey, string secretKey, string memo)
         {
             //Set network and server
             Network.UseTestNetwork();
@@ -146,11 +154,12 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await this.SubmitTransaction(finalTx.ToEnvelopeXdrBase64());
-                return true;
+                var hash = response.Hash;
+                return hash;
             }
             catch (Exception exception)
             {
-                return false;
+                return string.Empty;
             }
         }
 
@@ -236,6 +245,43 @@ namespace StellarVoteApp.Core.Services
             }
 
             return balancesList.ToArray();
+        }
+
+        public async Task<Dictionary<string, int>> GetElectionsResults()
+        {
+            Network.UseTestNetwork();
+            Server server = new Server("https://horizon-testnet.stellar.org");
+            Dictionary<string, int> candidateVotes = new Dictionary<string, int>();
+
+            var transactionsRequestBuilder = new TransactionsRequestBuilder(new Uri("https://horizon-testnet.stellar.org"), this.http);
+            var res = await transactionsRequestBuilder.ForAccount(DistributionAccount.PublicKey).Execute();
+            var records = res.Records;
+
+            while (records.Count > 0)
+            {
+                var result = await this.http.GetAsync(res.Links.Next.Uri);
+                var json = await result.Content.ReadAsStringAsync();
+                res = this.jsonConverter.DeserializeJson<Page<TransactionResponse>>(json);
+                records = res.Records;
+
+                foreach (var rec in records)
+                {
+                    var memo = rec.MemoValue;
+                    if (!string.IsNullOrWhiteSpace(memo))
+                    {
+                        if (!candidateVotes.ContainsKey(memo))
+                        {
+                            candidateVotes.Add(memo, 1);
+                        }
+                        else
+                        {
+                            candidateVotes[memo]++;
+                        }
+                    }
+                }
+            }
+            
+            return candidateVotes;
         }
     }
 }

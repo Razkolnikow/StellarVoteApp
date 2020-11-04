@@ -23,6 +23,7 @@ using StellarVoteApp.Data.Services.Contracts;
 using StellarVoteApp.Data.Services;
 using StellarVoteApp.Core.Services.Contracts;
 using StellarVoteApp.Core.Services;
+using System.Net.Http;
 
 namespace StellarVoteApp
 {
@@ -80,6 +81,7 @@ namespace StellarVoteApp
             services.AddTransient<IVoteService, VoteService>();
             services.AddTransient<IUserNationalIDInformationService, FakeUserNationalIDInformationService>();
             services.AddTransient<IJsonConverter, JsonConverter>();
+            services.AddTransient<HttpClient, HttpClient>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

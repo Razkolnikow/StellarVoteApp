@@ -1,11 +1,14 @@
-﻿@model string
+﻿@model StellarVoteApp.Models.ViewModels.SendVoteViewModel
 @{
 }
 
 @*TODO!!!*@
 <div class="row">
     <div class="col-sm-12">
-        <h3>Your vote was sent successfully!</h3>
-        <div>Your vote - @Model</div>
+        <h3 class="text-center">Your vote was sent successfully!</h3>
+        <br />
+        <h4 class="text-center">Your vote - @Model.ChosenCandidateName</h4>
+        <br />
+        <h4 class="text-center">Your vote was recorded in the blockchain by transaction with Hash - @Model.TxHash</h4>
     </div>
 </div>

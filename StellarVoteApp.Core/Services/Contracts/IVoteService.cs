@@ -30,7 +30,7 @@ namespace StellarVoteApp.Core.Services.Contracts
         /// <param name="secretKey"></param>
         /// <param name="memo"></param>
         /// <returns></returns>
-        Task<bool> SendVoteToken(string pubKey, string secretKey, string memo);
+        Task<string> SendVoteToken(string pubKey, string secretKey, string memo);
 
         /// <summary>
         /// Sends 1 XLM to the user address with Create Account Operation 
@@ -46,5 +46,7 @@ namespace StellarVoteApp.Core.Services.Contracts
         StellarAccount CreateUserAccount();
 
         Task<BalanceDTO[]> GetBalances(string accountId);
+
+        Task<Dictionary<string, int>> GetElectionsResults(); 
     }
 }
