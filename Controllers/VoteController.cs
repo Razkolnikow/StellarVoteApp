@@ -39,10 +39,9 @@ namespace StellarVoteApp.Controllers
             this.config = config;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var candidates = this.config.GetSection("Candidates").Get<List<SelectListItem>>();
-            var result = await this.voteService.GetElectionsResults();
             return View(new CandidatesViewModel(candidates));
         }
 
@@ -61,6 +60,34 @@ namespace StellarVoteApp.Controllers
         public IActionResult CreateAccount()
         {
             return View();
+        }
+
+        public IActionResult ViewResults()
+        {
+            return View();
+        }
+
+        public async Task<List<CandidateResultViewModel>> GetResults()
+        {
+            var candidatesNames = this.config.GetSection("Candidates")
+                .Get<List<SelectListItem>>()
+                .Select(x => x.Text)
+                .ToList();
+
+            var candidateResults = new List<CandidateResultViewModel>();
+            var results = await this.voteService.GetElectionsResults();
+
+            foreach (var result in results)
+            {
+                var name = result.Key;
+                var votes = result.Value;
+                if (candidatesNames.Contains(name))
+                {
+                    candidateResults.Add(new CandidateResultViewModel(name, votes));
+                }
+            }
+
+            return candidateResults;
         }
 
         [HttpPost]
