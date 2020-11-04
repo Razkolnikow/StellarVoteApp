@@ -94,6 +94,7 @@ namespace StellarVoteApp.Controllers
         public async Task<StellarAccountViewModel> CreateAccount([FromBody] JObject json)
         {
             var idCredentials = this.jsonConverter.DeserializeJson<IdCredentialsViewModel>(json.ToString());
+            // TODO add UI Validation
             var idCredentialsExist = await this.userService.CheckIfIdCredentialsExist(idCredentials.IdNumber, idCredentials.CardNumber);
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var hasStellarAccount = await this.userService.HasUserVotingAccount(userId);
@@ -102,6 +103,7 @@ namespace StellarVoteApp.Controllers
                 return null;
             }
 
+            // TODO Add UI Message on result and loading
             var isValidID = this.idService.CheckUserID(idCredentials.IdNumber, idCredentials.CardNumber);
 
             if (!isValidID)
