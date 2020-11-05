@@ -91,16 +91,20 @@ namespace StellarVoteApp.Controllers
         }
 
         [HttpPost]
-        public async Task<StellarAccountViewModel> CreateAccount([FromBody] JObject json)
+        public async Task<JsonResult> CreateAccount([FromBody] JObject json)
         {
             var idCredentials = this.jsonConverter.DeserializeJson<IdCredentialsViewModel>(json.ToString());
             // TODO add UI Validation
             var idCredentialsExist = await this.userService.CheckIfIdCredentialsExist(idCredentials.IdNumber, idCredentials.CardNumber);
+            if (idCredentialsExist)
+            {
+                return Json("This ID credentials were already used to create an account!");
+            }
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var hasStellarAccount = await this.userService.HasUserVotingAccount(userId);
             if (hasStellarAccount)
             {
-                return null;
+                return Json("The current user already has an account! Check your profile page for details!");
             }
 
             // TODO Add UI Message on result and loading
@@ -108,7 +112,7 @@ namespace StellarVoteApp.Controllers
 
             if (!isValidID)
             {
-                throw new Exception("Not valid ID Credentials!");
+                return Json("Not valid ID Credentials!");
             }
 
             StellarAccountViewModel model = new StellarAccountViewModel();
@@ -116,13 +120,7 @@ namespace StellarVoteApp.Controllers
             await this.userService.SaveAccountDetails(userId, stellarAccount.AccountId, stellarAccount.SecredSeed);
             await this.userService.SetVotingAccountTrue(userId);
             var isActivated = await this.voteService.ActivateUserAccount(stellarAccount.AccountId);
-            if (!isActivated)
-            {
-                // TODO
-                throw new Exception();
-            }
-
-            // TODO change trust etc
+            
             var isTrustCreated = await this.voteService.ChangeTrustVoteToken(stellarAccount.AccountId, stellarAccount.SecredSeed);
 
             if (isTrustCreated)
@@ -146,7 +144,7 @@ namespace StellarVoteApp.Controllers
                 }
             }
 
-            return model;
+            return Json(model);
         }
     }
 }

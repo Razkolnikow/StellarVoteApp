@@ -23,12 +23,17 @@ createBtn.on('click', function (ev) {
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-            console.log(data);
             spinner.hide();
-            created.show();
+            
             var accountId = data.accountId;
             var voteTokenBalance = data.voteTokenBalance;
-            $("#account-details").html(`Your accound id is <strong>${accountId}</strong> and you have <strong>${voteTokenBalance}</strong> Vote token.`);
+            if (accountId && accountId.length > 0) {
+                created.show();
+                $("#account-details").html(`Your accound id is <strong>${accountId}</strong> and you have <strong>${voteTokenBalance}</strong> Vote token.`);
+            } else {
+                $("#invalidtext").html(data);
+                $("#invalid").append('<div><button class="btn-default btn-info" onClick="window.location.href=window.location.href">Try again!</button></div>');
+            }            
         },
         error: function (err) {
             spinner.hide();
