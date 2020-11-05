@@ -6,6 +6,7 @@ using StellarVoteApp.Core.Models;
 using StellarVoteApp.Core.Services.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -247,7 +248,7 @@ namespace StellarVoteApp.Core.Services
             return balancesList.ToArray();
         }
 
-        public async Task<Dictionary<string, int>> GetElectionsResults()
+        public async Task<Dictionary<string, int>> GetElectionResults()
         {
             Network.UseTestNetwork();
             Server server = new Server("https://horizon-testnet.stellar.org");
@@ -282,6 +283,21 @@ namespace StellarVoteApp.Core.Services
             }
             
             return candidateVotes;
+        }
+
+        public async Task<UserAccountInformation> GetUserAccountInformation(string userAccountId)
+        {
+            Network.UseTestNetwork();
+
+            var transactionsRequestBuilder = new TransactionsRequestBuilder(new Uri("https://horizon-testnet.stellar.org"), this.http);
+            var res = await transactionsRequestBuilder.ForAccount(userAccountId).Execute();
+            var record = res.Records.FirstOrDefault(x => !string.IsNullOrEmpty(x.MemoValue));
+            if (record != null)
+            {
+                return new UserAccountInformation(record.Hash, record.MemoValue);
+            }
+
+            return new UserAccountInformation();
         }
     }
 }

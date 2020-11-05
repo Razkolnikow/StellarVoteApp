@@ -75,7 +75,7 @@ namespace StellarVoteApp.Controllers
                 .ToList();
 
             var candidateResults = new List<CandidateResultViewModel>();
-            var results = await this.voteService.GetElectionsResults();
+            var results = await this.voteService.GetElectionResults();
 
             foreach (var result in results)
             {

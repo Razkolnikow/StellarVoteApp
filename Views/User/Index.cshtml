@@ -1,8 +1,28 @@
-﻿
+﻿@model StellarVoteApp.Core.Models.UserAccountInformation
 @{
 }
 <div class="row">
     <div class="col-sm-12">
         <h3 class="text-center">My Profile</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h4 class="text-center">
+            You voted for <strong>@Model.CandidateName</strong>
+        </h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h4 class="text-center">
+            You can see the details of your transaction here: <strong>
+                    <a target="_blank" href="https://stellar.expert/explorer/testnet/tx/@Model.TxHash">
+                        @Model.TxHash
+                    </a>
+            </strong>
+        </h4>
     </div>
 </div>

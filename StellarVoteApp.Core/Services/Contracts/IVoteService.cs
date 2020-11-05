@@ -44,9 +44,19 @@ namespace StellarVoteApp.Core.Services.Contracts
         /// </summary>
         /// <returns></returns>
         StellarAccount CreateUserAccount();
-
+        /// <summary>
+        /// Get Balances of an account
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
         Task<BalanceDTO[]> GetBalances(string accountId);
 
-        Task<Dictionary<string, int>> GetElectionsResults(); 
+        /// <summary>
+        /// Gets the results from the election
+        /// </summary>
+        /// <returns></returns>
+        Task<Dictionary<string, int>> GetElectionResults();
+
+        Task<UserAccountInformation> GetUserAccountInformation(string userAccountId);
     }
 }
