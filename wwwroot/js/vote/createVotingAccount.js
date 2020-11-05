@@ -29,7 +29,7 @@ createBtn.on('click', function (ev) {
             var voteTokenBalance = data.voteTokenBalance;
             if (accountId && accountId.length > 0) {
                 created.show();
-                $("#account-details").html(`Your accound id is <strong>${accountId}</strong> and you have <strong>${voteTokenBalance}</strong> Vote token.`);
+                $("#account-details").html(`Your account id is <strong>${accountId}</strong> and you have <strong>${voteTokenBalance}</strong> Vote token.`);
             } else {
                 $("#invalidtext").html(data);
                 $("#invalid").append('<div><button class="btn-default btn-info" onClick="window.location.href=window.location.href">Try again!</button></div>');
