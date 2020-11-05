@@ -6,6 +6,7 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    bool hasVoted = ViewBag.HasVoted;
 }
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
@@ -59,21 +60,29 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div>
-        @if (Model)
+        @if (Model && !hasVoted)
         {
-        <div class="jumbotron">
-            <h2 class="text-center">Your voting account is created!</h2>
-            <p class="text-center">You are all set!</p>
-            <p class="text-center"><a class="btn btn-primary btn-lg" asp-controller="Vote" asp-action="Index" role="button">Vote</a></p>
-        </div>
+            <div class="jumbotron">
+                <h2 class="text-center">Your voting account is created!</h2>
+                <p class="text-center">You are all set!</p>
+                <p class="text-center"><a class="btn btn-primary btn-lg" asp-controller="Vote" asp-action="Index" role="button">Vote</a></p>
+            </div>
+        }
+        else if (!Model)
+        {
+            <div class="jumbotron">
+                <h2 class="text-center">You have to set up your voting account</h2>
+                <p class="text-center">Create voting account</p>
+                <p class="text-center"><a class="btn btn-primary btn-lg" asp-controller="Vote" asp-action="CreateAccount" role="button">Create</a></p>
+            </div>
         }
         else
         {
-        <div class="jumbotron">
-            <h2 class="text-center">You have to set up your voting account</h2>
-            <p class="text-center">Create voting account</p>
-            <p class="text-center"><a class="btn btn-primary btn-lg" asp-controller="Vote" asp-action="CreateAccount" role="button">Create</a></p>
-        </div>
+            <div class="jumbotron">
+                <h2 class="text-center">Thank You for Voting!</h2>
+                <p class="text-center">You are changing the future for the better!</p>
+                <p class="text-center"><a class="btn btn-primary btn-lg" asp-controller="User" asp-action="Index" role="button">Check Profile here</a></p>
+            </div>
         }
     </div>
 }

@@ -9,6 +9,11 @@
         <br />
         <h4 class="text-center">Your vote - @Model.ChosenCandidateName</h4>
         <br />
-        <h4 class="text-center">Your vote was recorded in the blockchain by transaction with Hash - @Model.TxHash</h4>
+        <h4 class="text-center">
+            Your vote was recorded in the blockchain by transaction with Hash -
+            <a target="_blank" href="https://stellar.expert/explorer/testnet/tx/@Model.TxHash">
+                @Model.TxHash
+            </a>
+        </h4>
     </div>
 </div>

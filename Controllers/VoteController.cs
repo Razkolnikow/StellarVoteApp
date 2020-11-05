@@ -39,9 +39,20 @@ namespace StellarVoteApp.Controllers
             this.config = config;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var hasStellarAccount = await this.userService.HasUserVotingAccount(userId);
+            if (!hasStellarAccount)
+            {
+                return this.RedirectToAction("CreateAccount");
+            }
+
             var candidates = this.config.GetSection("Candidates").Get<List<SelectListItem>>();
+            var stellarAccount = await this.userService.GetAccountDetails(userId);
+            var userAccountInformation = await this.voteService.GetUserAccountInformation(stellarAccount.AccountId);
+            ViewBag.HasVoted = userAccountInformation.HasVoted;
             return View(new CandidatesViewModel(candidates));
         }
 

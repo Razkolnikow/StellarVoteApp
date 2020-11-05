@@ -294,10 +294,10 @@ namespace StellarVoteApp.Core.Services
             var record = res.Records.FirstOrDefault(x => !string.IsNullOrEmpty(x.MemoValue));
             if (record != null)
             {
-                return new UserAccountInformation(record.Hash, record.MemoValue);
+                return new UserAccountInformation(record.Hash, record.MemoValue, userAccountId);
             }
 
-            return new UserAccountInformation();
+            return new UserAccountInformation(userAccountId);
         }
     }
 }

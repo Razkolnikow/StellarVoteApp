@@ -1,28 +1,73 @@
-﻿@model StellarVoteApp.Core.Models.UserAccountInformation
+﻿@model bool
 @{
+    var userAccountInformation = ViewBag.UserAccountInformation;
 }
 <div class="row">
     <div class="col-sm-12">
         <h3 class="text-center">My Profile</h3>
     </div>
 </div>
-
-<div class="row">
-    <div class="col-sm-12">
-        <h4 class="text-center">
-            You voted for <strong>@Model.CandidateName</strong>
-        </h4>
+@if (Model && string.IsNullOrEmpty(userAccountInformation.CandidateName))
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="text-center">
+                Your AccountID is <strog>@userAccountInformation.AccountId</strog>
+            </h3>
+        </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-sm-12">
-        <h4 class="text-center">
-            You can see the details of your transaction here: <strong>
-                    <a target="_blank" href="https://stellar.expert/explorer/testnet/tx/@Model.TxHash">
-                        @Model.TxHash
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="text-center">
+                You haven't voted yet! This is your chance to change the future!
+            </h3>
+            <h4 class="text-center">
+                <a asp-controller="Vote" asp-action="Index">VOTE</a>
+            </h4>
+        </div>
+    </div>
+}
+else if (Model && !string.IsNullOrEmpty(userAccountInformation.CandidateName))
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="text-center">
+                You voted for <strong>@userAccountInformation.CandidateName</strong>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="text-center">
+                Your AccountID is <strong>@userAccountInformation.AccountId</strong>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="text-center">
+                You can see the details of your transaction here: <strong>
+                    <a target="_blank" href="https://stellar.expert/explorer/testnet/tx/@userAccountInformation.TxHash">
+                        @userAccountInformation.TxHash
                     </a>
-            </strong>
-        </h4>
+                </strong>
+            </h4>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="text-center">
+                Currently You do not have voting account.
+            </h3>
+            <h4 class="text-center">
+                <a asp-controller="Vote" asp-action="CreateAccount">Create Voting Account</a>
+            </h4>
+        </div>
+    </div>
+}

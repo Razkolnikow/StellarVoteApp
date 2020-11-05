@@ -1,39 +1,56 @@
 ﻿@model StellarVoteApp.Models.ViewModels.CandidatesViewModel
 @{
     var loading = "Loading...";
+    bool hasVoted = ViewBag.HasVoted;
 }
 
-<div class="row">
+@if (!hasVoted)
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="text-center">
+                Time to Vote
+            </h3>
+        </div>
+    </div>
+
     <div class="col-sm-12">
-        <h3 class="text-center">
-            Time to Vote
-        </h3>
-    </div>
-</div>
+        <div class="card">
+            <div class="card-header">
 
-<div class="col-sm-12">
-    <div class="card">
-        <div class="card-header">
-
-        </div>
-        <div class="card-body card-block">
-            <form asp-controller="Vote" asp-action="SendVote" method="post" class="">
-                <div class="form-group">
-                    <label class=" form-control-label">Choose the Candidate you want to vote for</label>
-                    <select class="form-control" asp-for="Value" asp-items="Model.Candidates"></select>
-                </div>
-                <div class="card-footer">
-                    <button id="sendvote" type="submit" class="btn btn-primary btn-sm" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> @loading">
-                        <i class="fa fa-dot-circle-o"></i> Vote
-                    </button>
-                    <button type="reset" class="btn btn-danger btn-sm">
-                        <i class="fa fa-ban"></i> Reset
-                    </button>
-                </div>
-            </form>
+            </div>
+            <div class="card-body card-block">
+                <form asp-controller="Vote" asp-action="SendVote" method="post" class="">
+                    <div class="form-group">
+                        <label class=" form-control-label">Choose the Candidate you want to vote for</label>
+                        <select class="form-control" asp-for="Value" asp-items="Model.Candidates"></select>
+                    </div>
+                    <div class="card-footer">
+                        <button id="sendvote" type="submit" class="btn btn-primary btn-sm" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i> @loading">
+                            <i class="fa fa-dot-circle-o"></i> Vote
+                        </button>
+                        <button type="reset" class="btn btn-danger btn-sm">
+                            <i class="fa fa-ban"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="text-center">
+                You have already sent your vote!
+            </h3>
+            <h4 class="text-center">
+                For more details check <strong><a asp-controller="User" asp-action="Index">Your Profile</a></strong>
+            </h4>
+        </div>
+    </div>
+}
 
 @section Scripts {
     <script src="~/js/vote/sendVote.js"></script>

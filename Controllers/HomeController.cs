@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using StellarVoteApp.Core.Services.Contracts;
 using StellarVoteApp.Data.Services.Contracts;
 using StellarVoteApp.Models;
 
@@ -13,9 +14,11 @@ namespace StellarVoteApp.Controllers
     public class HomeController : Controller
     {
         private IUserService userService;
-        public HomeController(IUserService userService)
+        private IVoteService voteService;
+        public HomeController(IUserService userService, IVoteService voteService)
         {
             this.userService = userService;
+            this.voteService = voteService;
         }
 
         public async Task<IActionResult> Index()
@@ -23,6 +26,17 @@ namespace StellarVoteApp.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var hasStellarAccount = await this.userService.HasUserVotingAccount(userId);
+            if (hasStellarAccount)
+            {
+                var stellarAccount = await this.userService.GetAccountDetails(userId);
+                var userAccountInfo = await this.voteService.GetUserAccountInformation(stellarAccount.AccountId);
+                ViewBag.HasVoted = userAccountInfo.HasVoted;
+            }
+            else
+            {
+                ViewBag.HasVoted = false;
+            }
+            
             return View(hasStellarAccount);
         }
 
