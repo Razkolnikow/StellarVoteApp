@@ -50,6 +50,13 @@ namespace StellarVoteApp
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            services.Configure<CookieTempDataProviderOptions>(options => {
+                options.Cookie.IsEssential = true;
+            });
+            services.AddSession(options =>
+            {
+                options.Cookie.IsEssential = true;
+            });
 
             services.Configure<StellarVoteDatabaseSettings>(
                     Configuration.GetSection(nameof(StellarVoteDatabaseSettings)));
