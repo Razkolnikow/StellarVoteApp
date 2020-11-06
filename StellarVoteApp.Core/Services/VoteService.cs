@@ -274,18 +274,21 @@ namespace StellarVoteApp.Core.Services
                     var memo = rec.MemoValue;
                     if (!string.IsNullOrWhiteSpace(memo))
                     {
-                        if (!candidateVotes.ContainsKey(memo))
+                        if (this.CheckStellarVIsValidVote(rec))
                         {
-                            candidateVotes.Add(memo, 1);
-                        }
-                        else
-                        {
-                            candidateVotes[memo]++;
+                            if (!candidateVotes.ContainsKey(memo))
+                            {
+                                candidateVotes.Add(memo, 1);
+                            }
+                            else
+                            {
+                                candidateVotes[memo]++;
+                            }
                         }
                     }
                 }
             }
-            
+
             return candidateVotes;
         }
 
@@ -302,6 +305,31 @@ namespace StellarVoteApp.Core.Services
             }
 
             return new UserAccountInformation(userAccountId);
+        }
+
+        private bool CheckStellarVIsValidVote(TransactionResponse rec)
+        {
+            try
+            {
+                var bytes = rec.EnvelopeXdr.ToCharArray();
+                var txEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope
+                    .Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(Convert.FromBase64CharArray(bytes, 0, bytes.Length)));
+                var feeBumpTx = FeeBumpTransaction.FromEnvelopeXdr(txEnvelope);
+                var ops = feeBumpTx.InnerTransaction.Operations;
+                foreach (PaymentOperation op in ops)
+                {
+                    var asset = op.Asset as AssetTypeCreditAlphaNum12;
+                    var code = asset?.Code;
+                    if (code == "StellarV")
+                        return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;               
+            }            
+
+            return false;
         }
     }
 }
