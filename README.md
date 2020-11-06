@@ -6,7 +6,7 @@
 
 ### The idea of this web application is to use blockchain technology in the election process and to give every person the opportunity to vote from everywhere in a secure and private manner.
 
-**You can run the application locally using IIS Express and MongodDB**
+**You can run the application locally using IIS Express and MongoDB**
 **You have to install mongodb , navigate to ```C:\Program Files\MongoDB\Server\3.6\bin``` or where you have it installed and run ```mongod```**
 
 
