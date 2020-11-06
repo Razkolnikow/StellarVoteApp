@@ -74,7 +74,6 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await this.SubmitTransaction(finalTx.ToEnvelopeXdrBase64());
-                // TODO: check if tx is successful and if not retry it!!!
                 return true;
             }
             catch (Exception exception)
@@ -115,7 +114,6 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await server.SubmitTransaction(transaction);
-                // TODO: check if tx is successful and if not retry it!!!
                 return true;
             }
             catch (Exception exception)
@@ -157,7 +155,6 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await this.SubmitTransaction(finalTx.ToEnvelopeXdrBase64());
-                // TODO: check if tx is successful and if not retry it!!!
                 var hash = response.Hash;
                 return hash;
             }
@@ -205,7 +202,6 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await server.SubmitTransaction(transaction);
-                // TODO check if tx is successful and if not retry it!!!!
                 return true;
             }
             catch (Exception exception)
