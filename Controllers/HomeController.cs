@@ -42,14 +42,14 @@ namespace StellarVoteApp.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "The idea of this web application is to use blockchain technology in the election process and to give every person the opportunity to vote from everywhere in a secure and private manner.";
 
             return View();
         }
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "https://github.com/Razkolnikow";
 
             return View();
         }
