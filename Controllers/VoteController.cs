@@ -105,7 +105,7 @@ namespace StellarVoteApp.Controllers
         public async Task<JsonResult> CreateAccount([FromBody] JObject json)
         {
             var idCredentials = this.jsonConverter.DeserializeJson<IdCredentialsViewModel>(json.ToString());
-            // TODO add UI Validation
+
             var idCredentialsExist = await this.userService.CheckIfIdCredentialsExist(idCredentials.IdNumber, idCredentials.CardNumber);
             if (idCredentialsExist)
             {
@@ -118,7 +118,6 @@ namespace StellarVoteApp.Controllers
                 return Json("The current user already has an account! Check your profile page for details!");
             }
 
-            // TODO Add UI Message on result and loading
             var isValidID = this.idService.CheckUserID(idCredentials.IdNumber, idCredentials.CardNumber);
 
             if (!isValidID)
@@ -128,17 +127,30 @@ namespace StellarVoteApp.Controllers
 
             StellarAccountViewModel model = new StellarAccountViewModel();
             var stellarAccount = this.voteService.CreateUserAccount();
-            await this.userService.SaveAccountDetails(userId, stellarAccount.AccountId, stellarAccount.SecredSeed);
-            await this.userService.SetVotingAccountTrue(userId);
+            
             var isActivated = await this.voteService.ActivateUserAccount(stellarAccount.AccountId);
+            if (!isActivated)
+            {
+                return Json("Account activation failed! Try again!");
+            }
             
             var isTrustCreated = await this.voteService.ChangeTrustVoteToken(stellarAccount.AccountId, stellarAccount.SecredSeed);
 
             if (isTrustCreated)
             {
                 var receivedVoteToken = await this.voteService.SendVoteTokenToUser(stellarAccount.AccountId);
+                if (!receivedVoteToken)
+                {
+                    return Json("There was a problem with the acquisition of the StellarV token. Try again!");
+                }
+            }
+            else
+            {
+                return Json("The StellarV trust line transaction failed! Try again!");
             }
 
+            await this.userService.SaveAccountDetails(userId, stellarAccount.AccountId, stellarAccount.SecredSeed);
+            await this.userService.SetVotingAccountTrue(userId);
             await this.userService.SaveUserIdCredentials(idCredentials.IdNumber, idCredentials.CardNumber);
 
             var balances = await this.voteService.GetBalances(stellarAccount.AccountId);

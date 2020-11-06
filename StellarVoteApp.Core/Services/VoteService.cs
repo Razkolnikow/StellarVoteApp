@@ -74,7 +74,7 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await this.SubmitTransaction(finalTx.ToEnvelopeXdrBase64());
-                return true;
+                return response.IsSuccess();
             }
             catch (Exception exception)
             {
@@ -114,7 +114,7 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await server.SubmitTransaction(transaction);
-                return true;
+                return response.IsSuccess();
             }
             catch (Exception exception)
             {
@@ -202,7 +202,7 @@ namespace StellarVoteApp.Core.Services
             try
             {
                 var response = await server.SubmitTransaction(transaction);
-                return true;
+                return response.IsSuccess();
             }
             catch (Exception exception)
             {
