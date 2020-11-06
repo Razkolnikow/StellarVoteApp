@@ -11,12 +11,15 @@ $.ajax({
         var sumVotes = votes.reduce((a, b) => a + b, 0);
         var votesPercentages = votes.map(i => Number((i / sumVotes) * 100).toFixed(2));
 
+        var resultsHeader = $('#header');
+        resultsHeader.html("Election Results");
+
         var resultsDiv = $("#results");
         for (let i = 0; i < names.length; i++) {
             let name = names[i];
             let vote = votes[i];
             let percentage = votesPercentages[i];
-            resultsDiv.append(`<h4>Candidate: <strong>${name}</strong> --- Votes: <strong>${vote}</strong> --- Percentage: <strong>${percentage}</strong></h4>`)
+            resultsDiv.append(`<h4>Candidate: <strong>${name}</strong> --- Votes: <strong>${vote}</strong> --- Percentage: <strong>${percentage}%</strong></h4>`)
         }
         
         var chart = new Chart(ctx, {
@@ -25,7 +28,7 @@ $.ajax({
             data: {
                 labels: names,
                 datasets: [{
-                    label: 'Election Results',
+                    label: 'Election Votes',
                     backgroundColor: "rgba(0, 123, 255, 0.5)",
                     borderColor: "rgba(0, 123, 255, 0.9)",
                     data: votes
