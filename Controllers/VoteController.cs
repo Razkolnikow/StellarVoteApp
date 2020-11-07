@@ -141,12 +141,12 @@ namespace StellarVoteApp.Controllers
                 var receivedVoteToken = await this.voteService.SendVoteTokenToUser(stellarAccount.AccountId);
                 if (!receivedVoteToken)
                 {
-                    return Json("There was a problem with the acquisition of the StellarV token. Try again!");
+                    return Json("There was a problem with the acquisition of the Vote token. Try again!");
                 }
             }
             else
             {
-                return Json("The StellarV trust line transaction failed! Try again!");
+                return Json("The Vote token create trustline transaction failed! Try again!");
             }
 
             await this.userService.SaveAccountDetails(userId, stellarAccount.AccountId, stellarAccount.SecredSeed);

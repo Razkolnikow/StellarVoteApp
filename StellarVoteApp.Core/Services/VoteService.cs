@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace StellarVoteApp.Core.Services
 {
@@ -17,11 +18,15 @@ namespace StellarVoteApp.Core.Services
     {
         private HttpClient http;
         private IJsonConverter jsonConverter;
+        private IConfiguration config;
+        private readonly string VoteToken;
 
-        public VoteService(HttpClient http, IJsonConverter jsonConverter)
+        public VoteService(HttpClient http, IJsonConverter jsonConverter, IConfiguration config)
         {
             this.http = http;
             this.jsonConverter = jsonConverter;
+            this.config = config;
+            this.VoteToken = this.config.GetSection("VoteToken").Value;
         }
 
         public async Task<bool> ChangeTrustVoteToken(string pubKey, string secretKey)
@@ -30,7 +35,7 @@ namespace StellarVoteApp.Core.Services
             Network.UseTestNetwork();
             Server server = new Server("https://horizon-testnet.stellar.org");
 
-            var nonNativeAsset = Asset.Create(null, "StellarV", IssueAccount.PublicKey);
+            var nonNativeAsset = Asset.Create(null, this.VoteToken, IssueAccount.PublicKey);
 
             var source = KeyPair.FromSecretSeed(secretKey);
 
@@ -99,7 +104,7 @@ namespace StellarVoteApp.Core.Services
             //Create source account object
             Account sourceAccount = new Account(senderSource.AccountId, sourceAccountResponse.SequenceNumber);
 
-            Asset asset = new AssetTypeCreditAlphaNum12("StellarV", IssueAccount.PublicKey);
+            Asset asset = new AssetTypeCreditAlphaNum12(this.VoteToken, IssueAccount.PublicKey);
 
             //Create payment operation
             PaymentOperation operation = new PaymentOperation.Builder(destinationKeyPair, asset, "1").SetSourceAccount(sourceAccount.KeyPair).Build();
@@ -135,7 +140,7 @@ namespace StellarVoteApp.Core.Services
             //Create source account object
             Account sourceAccount = new Account(source.AccountId, sourceAccountResponse.SequenceNumber);
 
-            Asset asset = new AssetTypeCreditAlphaNum12("StellarV", IssueAccount.PublicKey);
+            Asset asset = new AssetTypeCreditAlphaNum12(this.VoteToken, IssueAccount.PublicKey);
 
             //Create payment operation
             PaymentOperation operation = new PaymentOperation.Builder(KeyPair.FromAccountId(DistributionAccount.PublicKey), asset, "1").SetSourceAccount(sourceAccount.KeyPair).Build();
@@ -316,7 +321,7 @@ namespace StellarVoteApp.Core.Services
                 {
                     var asset = op.Asset as AssetTypeCreditAlphaNum12;
                     var code = asset?.Code;
-                    if (code == "StellarV")
+                    if (code == this.VoteToken)
                         return true;
                 }
             }
