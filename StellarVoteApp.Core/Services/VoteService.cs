@@ -177,7 +177,7 @@ namespace StellarVoteApp.Core.Services
             return stellarAccount;
         }
 
-        public async Task<bool> ActivateUserAccount(string accountId)
+        public async Task<bool> ActivateUserAccount(string accountId, string secretSeed)
         {
             //Set network and server
             Network.UseTestNetwork();
@@ -195,14 +195,28 @@ namespace StellarVoteApp.Core.Services
 
             Asset asset = new AssetTypeNative();
 
-            //Create payment operation
-            CreateAccountOperation operation = new CreateAccountOperation.Builder(destinationKeyPair, "1").SetSourceAccount(sourceAccount.KeyPair).Build();
+            var operationStartSponsor = new BeginSponsoringFutureReservesOperation.Builder(destinationKeyPair)
+                .SetSourceAccount(sourceKeyPair)
+                .Build();            
 
-            Transaction transaction = new TransactionBuilder(sourceAccount)
-                .AddOperation(operation)
+            //Create payment operation
+            CreateAccountOperation operation = new CreateAccountOperation.Builder(destinationKeyPair, "0").SetSourceAccount(sourceAccount.KeyPair).Build();
+
+            var sponsoredSource = KeyPair.FromSecretSeed(secretSeed);
+            var operationEndSponsoring = new EndSponsoringFutureReservesOperation.Builder()
+                .SetSourceAccount(sponsoredSource)
                 .Build();
 
+            Transaction transaction = new TransactionBuilder(sourceAccount)
+                .SetFee(100)
+                .AddOperation(operationStartSponsor)
+                .AddOperation(operation)
+                .AddOperation(operationEndSponsoring)
+                .Build();
+
+            //Sign Transaction            
             transaction.Sign(sourceKeyPair);
+            transaction.Sign(sponsoredSource);
 
             try
             {

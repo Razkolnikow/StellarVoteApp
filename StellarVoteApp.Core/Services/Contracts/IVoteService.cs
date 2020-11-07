@@ -33,11 +33,11 @@ namespace StellarVoteApp.Core.Services.Contracts
         Task<string> SendVoteToken(string pubKey, string secretKey, string memo);
 
         /// <summary>
-        /// Sends 1 XLM to the user address with Create Account Operation 
+        /// Activates user account with Create Account Operation 
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        Task<bool> ActivateUserAccount(string accountId);
+        Task<bool> ActivateUserAccount(string accountId, string secretSeed);
 
         /// <summary>
         /// Generates random KeyPair

@@ -128,7 +128,7 @@ namespace StellarVoteApp.Controllers
             StellarAccountViewModel model = new StellarAccountViewModel();
             var stellarAccount = this.voteService.CreateUserAccount();
             
-            var isActivated = await this.voteService.ActivateUserAccount(stellarAccount.AccountId);
+            var isActivated = await this.voteService.ActivateUserAccount(stellarAccount.AccountId, stellarAccount.SecredSeed);
             if (!isActivated)
             {
                 return Json("Account activation failed! Try again!");
